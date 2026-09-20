@@ -1,0 +1,35 @@
+/* story 板块样式
+   从 REFERENCE-v47.html 原样切出,第一步只搬家、逐字不改。 */
+/* 台词 */
+.scene-chip{font-size:var(--u-sub);color:#8A5A33;background:#FBF3EC;border-radius:8px;padding:6px 12px;margin-bottom:12px}
+.words{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.wtag{background:var(--accent-soft);border:1.5px solid var(--accent);color:var(--accent-deep);
+  font-family:var(--f-kai);font-size:var(--t-word);font-weight:700;padding:3px 13px;border-radius:9px}
+
+/* 循环练 */
+.drill{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.drill .box{background:#F8FAFD;border:1.5px solid var(--line);border-radius:14px;padding:16px 18px}
+.drill .box h4{font-size:var(--u-sub);color:var(--ink-soft);letter-spacing:.1em;margin-bottom:12px}
+.playword{width:54px;height:54px;border-radius:50%;background:var(--accent);color:#fff;font-size:22px;
+  box-shadow:0 4px 0 var(--accent-deep);margin-bottom:12px}
+.playword:active{transform:translateY(2px);box-shadow:none}
+.opts{display:flex;gap:9px;flex-wrap:wrap}
+.opt{min-width:46px;padding:6px 14px;border-radius:11px;background:var(--card);border:2px solid var(--line);
+  font-weight:700;font-size:var(--t-word);font-family:var(--f-kai);transition:.15s}
+.opt:hover{border-color:var(--blue)}
+.opt.ok{background:var(--ok);border-color:var(--ok);color:#fff}
+.opt.no{background:var(--no);border-color:var(--no);color:#fff;animation:shake .35s}
+.opt.dim{opacity:.4;pointer-events:none}
+.retry{font-size:var(--u-sub);color:var(--blue-ink);background:var(--card);
+  border:1.5px dashed var(--blue);border-radius:11px;padding:5px 13px;font-weight:700}
+.retry:hover{background:var(--blue-soft)}
+@keyframes shake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.stem{font-family:var(--f-kai);font-size:var(--t-sent);margin-bottom:12px}
+.blank{display:inline-block;min-width:58px;border-bottom:2.5px solid var(--accent);text-align:center;
+  color:var(--accent-deep);margin:0 2px}
+/* Readable real-world material supplied by the manuscript, independent of scene notes. */
+.story-material{border:1px solid var(--line);border-radius:12px;padding:20px;margin:0 0 22px;max-width:340px;background:var(--card)}
+.story-material strong{display:block;font-size:var(--u-sub);color:var(--ink-soft);margin-bottom:12px}
+.story-material>div{font-size:var(--t-sent);line-height:1.8}
+/* 台词译文行(2026-09-19):气泡里中文下面一行小字;显示与否由 body.showtr(设置「译文」)控制,见 core.css 的 .trline */
+.dtr{font-size:.78em;line-height:1.35;font-style:normal;font-family:var(--sans,sans-serif)}

@@ -1,0 +1,61 @@
+/* memory 板块样式
+   从 REFERENCE-v47.html 原样切出,第一步只搬家、逐字不改。 */
+/* ══ 记忆翻牌(移植正式版 .memory 玩法) ══ */
+.msub{margin-bottom:14px}
+.mtip{display:block;font-size:var(--u-sub);color:var(--ink-soft);margin-bottom:10px}
+.mbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px}
+.mtime{font-size:var(--u-sub);color:var(--blue-ink);font-variant-numeric:tabular-nums;min-width:56px;text-align:right}
+.memory{position:relative;margin-top:2px}
+.mcard{position:absolute;perspective:500px;cursor:pointer;user-select:none;touch-action:manipulation;
+  transition:left .5s cubic-bezier(.4,.9,.4,1),top .5s cubic-bezier(.4,.9,.4,1)}
+.mcard .inn{position:absolute;inset:0;transform-style:preserve-3d;-webkit-transform-style:preserve-3d;transition:transform .38s}
+.mcard.down .inn{transform:rotateY(180deg)}
+.mcard .fa,.mcard .bk{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;
+  transform:rotateY(0deg);transition:visibility 0s linear .19s;
+  border:2px solid var(--line);border-radius:12px;display:flex;align-items:center;justify-content:center;background:#fff}
+.mcard .bk{visibility:hidden}
+.mcard.down .fa{visibility:hidden}
+.mcard.down .bk{visibility:visible}
+.mcard .fa.zh{flex-direction:column;gap:2px;line-height:1.12}
+.mcard .fa.zh .cpy{font-family:var(--f-ui);font-size:calc(11.5px * var(--fs));
+  color:var(--blue-ink);letter-spacing:.3px}
+.mcard .fa.zh .czh{font-family:var(--f-kai);font-size:calc(22px * var(--fs));color:var(--ink)}
+.mcard .fa.en{font-family:var(--f-ui);font-size:calc(13px * var(--fs));line-height:1.25;
+  text-align:center;padding:3px 7px;color:var(--ink-soft);overflow:hidden}
+@media (max-width:430px){
+  .card{padding:16px 12px}
+  .mcard .fa.en{font-size:calc(11px * var(--fs));padding:2px 3px;line-height:1.2}
+  .mcard .fa.zh .czh{font-size:calc(18px * var(--fs))}
+  .mcard .fa.zh .cpy{font-size:calc(10px * var(--fs))}
+  .mtip{font-size:calc(11.5px * var(--fs))}
+}
+.mcard .fa.en.todo{color:var(--accent-deep);font-style:italic}
+/* split 牌面(一级 v5 翻卡站):拼音在上、译文在下 */
+.mcard .fa.en.split{flex-direction:column;gap:3px;line-height:1.15;font-size:calc(15px * var(--fs));color:var(--ink)}
+.mcard .fa.en.split .cpy{font-family:var(--f-ui);font-size:calc(15px * var(--fs));font-weight:700;color:var(--blue-ink);letter-spacing:.4px;font-style:normal}
+@media (max-width:430px){
+  .mcard .fa.en.split{font-size:calc(12.5px * var(--fs))}
+  .mcard .fa.en.split .cpy{font-size:calc(12.5px * var(--fs))}
+}
+.mcard .bk{transform:rotateY(180deg);-webkit-transform:rotateY(180deg);
+  background:repeating-linear-gradient(45deg,#E7EEF6 0 7px,#F2F7FC 7px 14px);
+  color:#748AA0;font-size:calc(24px * var(--fs));font-family:var(--f-kai)}
+.mcard.miss .fa{border-color:var(--no);background:#FCEFEB;animation:shake .35s}
+.mgo{display:flex;gap:8px;flex-wrap:wrap}
+.mlevel{display:inline-flex;align-items:center;gap:6px;background:var(--blue-soft);color:var(--blue-ink);
+  border-radius:13px;padding:2px 12px;font-size:var(--u-sub);font-weight:700;white-space:nowrap}
+.mlevel.adv{background:var(--accent-soft);color:var(--accent-deep)}
+.mlevel.idle{background:#EEF2F7;color:var(--ink-soft)}
+.mcard.won{pointer-events:none}
+.mcard.won .fa{border-color:var(--ok);background:#EFF6F1;box-shadow:0 0 0 2px #DDEEE3}
+.mcard.peek .fa{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+.mdone{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:9px;background:rgba(248,250,253,.94);border-radius:14px;z-index:5;text-align:center}
+.mdone .big{font-family:var(--f-round);font-size:calc(21px * var(--fs));color:var(--ok)}
+.mdone .sm{font-size:var(--u-note);color:var(--ink-soft)}
+#cfx{position:fixed;inset:0;pointer-events:none;z-index:900;overflow:hidden}
+#cfx i{position:absolute;top:-16px;width:9px;height:14px;border-radius:2px;animation:cfall linear forwards}
+@keyframes cfall{to{transform:translateY(108vh) rotate(680deg)}}
+/* 翻卡分拨标题(2026-09-19):一站里几张牌桌,各带一行小标题;flashcard 片段依赖 memory,样式放这里 */
+.fc-deck{margin:14px 0 6px;font-size:.95em;color:var(--ink-2,#556)}
+.fc-deck:first-of-type{margin-top:6px}

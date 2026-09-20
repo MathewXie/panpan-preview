@@ -1,0 +1,9 @@
+/* discovery 板块样式
+   从 REFERENCE-v47.html 原样切出,第一步只搬家、逐字不改。 */
+/* 发现 */
+.disc{display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+.disc .bigword{flex:none;width:104px;height:104px;border-radius:18px;background:var(--accent);color:#fff;
+  font-family:var(--f-kai);font-size:var(--t-big);font-weight:700;display:flex;align-items:center;
+  justify-content:center;box-shadow:0 5px 0 var(--accent-deep)}
+.disc .bigword .py{color:#D8E8DE}
+.disc p{flex:1;min-width:220px;font-size:var(--u-body);color:var(--ink-soft);line-height:1.8}

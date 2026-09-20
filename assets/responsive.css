@@ -1,0 +1,25 @@
+/* responsive.css — 断点。必须最后加载:它覆盖 blocks 的 .drill/.brief/.hztop/.hzbig 与 footer
+   从 REFERENCE-v47.html 原样切出,第一步只搬家、逐字不改。 */
+@media (max-width:1180px){ #bar .btn .lb{display:none} }
+@media (max-width:1120px){ #bar .lesson{max-width:34vw} }
+@media (max-width:820px){ #bar .lesson{display:none} }
+@media (max-width:760px){ #stopBtn .cnt{display:none} }
+/* 极窄屏:站选择器只留站号,腾出空间让设置与身份按钮留在屏内 */
+@media (max-width:600px){
+  #bar{gap:7px;padding:0 9px}
+  #stopBtn .nm{max-width:34vw}
+  #bar .logo{display:none}
+  #bar .btn{padding:7px 10px}
+}
+@media (max-width:920px){
+  main{padding:22px 14px 40px}
+  .drill{grid-template-columns:1fr}
+  .brief{grid-template-columns:1fr}
+  body{--t-lead:calc(19.5px * var(--fs));--t-sent:calc(18px * var(--fs));--measure:100%}
+  .bubble{max-width:84%}
+  .drow{gap:7px}
+  .hztop{gap:10px}
+  .hzbig{width:min(228px,100%);height:auto;aspect-ratio:1/1}
+  footer{padding:0 14px 40px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}

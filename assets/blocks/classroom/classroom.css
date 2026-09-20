@@ -1,0 +1,21 @@
+/* classroom 板块样式
+   从 REFERENCE-v47.html 原样切出,第一步只搬家、逐字不改。 */
+/* 盼盼课堂 */
+.gram-ex{display:flex;align-items:baseline;gap:10px;padding:4px 0;flex-wrap:wrap}
+.gram-ex .zh{font-family:var(--f-kai);font-size:var(--t-sent)}
+/* 用法说明:盼盼在讲,所以走跟课文一样的气泡,靠右(主角位) */
+.note-row{margin-top:14px;margin-bottom:0}
+.note-bubble{font-family:var(--f-ui);font-size:var(--u-body);line-height:1.65;
+  background:var(--accent-soft);border-color:#C6DFD1;color:var(--ink)}
+.drow.side-hero .note-bubble::after{border-left-color:var(--accent-soft)}
+.note-row:hover .note-bubble{border-color:#C6DFD1}
+body.night .note-bubble{background:#22302A;border-color:#37493F;color:var(--ink)}
+body.night .drow.side-hero .note-bubble::after{border-left-color:#22302A}
+/* 外语界面下讲堂译文行常显;结构行下的译文 */
+.trline.tr-lang{display:block;margin-top:2px}
+.grammar-structure-tr{font-family:var(--f-ui);font-size:var(--u-sub);color:var(--ink-soft);margin-top:6px;font-weight:400}
+.mini{font-size:var(--u-note);background:var(--card);border:1.5px solid var(--line);border-radius:13px;
+  padding:2px 11px;color:var(--ink-soft)}
+.mini:hover{border-color:var(--blue)}
+.grammar-structure{padding:16px;border:1px solid var(--line);border-radius:10px;font-size:var(--t-sent);line-height:1.7;margin-bottom:18px}
+.grammar-caution{font-size:var(--u-body);line-height:1.8;margin-top:20px}

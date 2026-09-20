@@ -1,0 +1,48 @@
+/* flashcard 板块样式(2026-09-15)。色与字号只用 core.css 的变量,见 docs/10 §一、§二。 */
+.fc-bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.fc-bar.center{justify-content:center;margin:16px 0 6px}
+.fc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(calc(104px * var(--fs)),1fr));gap:12px}
+/* 一张卡:正反两面绕竖轴翻转。visibility 随翻面切换,避免某些浏览器透出背面文字 */
+.fc-card{position:relative;aspect-ratio:4/5;perspective:700px;cursor:pointer;user-select:none;
+  touch-action:manipulation;border-radius:14px}
+.fc-card .fc-in{position:absolute;inset:0;transform-style:preserve-3d;-webkit-transform-style:preserve-3d;transition:transform .38s}
+.fc-card.on .fc-in{transform:rotateY(180deg)}
+.fc-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;
+  transition:visibility 0s linear .19s;border:2px solid var(--line);border-radius:14px;background:var(--card);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:8px 6px}
+.fc-card.on .fc-front{visibility:hidden}
+.fc-card:not(.on) .fc-back{visibility:hidden}
+.fc-card:hover .fc-face{border-color:var(--blue)}
+/* 词卡:字号比单字卡收一档,三字词也放得下 */
+.fc-front .fc-ch{font-family:var(--f-kai);font-size:calc(38px * var(--fs));line-height:1.1;color:var(--ink);text-align:center;letter-spacing:.02em}
+.fc-back{transform:rotateY(180deg);background:var(--blue-soft);border-color:var(--blue)}
+.fc-back .fc-py{font-size:var(--u-body);color:var(--blue-ink);font-weight:700;letter-spacing:.04em}
+.fc-back .fc-ch{font-family:var(--f-kai);font-size:var(--t-show);line-height:1.1;color:var(--ink)}
+/* 翻面下方:这个词里要写的字 */
+.fc-writes{display:flex;align-items:center;gap:4px;margin-top:2px;flex-wrap:wrap;justify-content:center}
+.fc-writes small{font-family:var(--f-ui);font-size:var(--u-py);color:var(--accent-deep);background:var(--accent-soft);border-radius:6px;padding:0 5px;line-height:1.6}
+.fc-writes b{font-family:var(--f-kai);font-weight:400;font-size:var(--t-word);color:var(--accent-deep);border-bottom:2px solid var(--accent);line-height:1.2}
+.fc-say{position:absolute;right:6px;bottom:6px;width:30px;height:30px;border-radius:50%;
+  background:var(--card);border:1.5px solid var(--blue);font-size:14px;display:flex;align-items:center;justify-content:center}
+.fc-tag{position:absolute;top:6px;right:6px;font-size:var(--u-note);font-weight:700;color:var(--accent-deep);
+  background:var(--accent-soft);border-radius:7px;padding:0 6px;line-height:1.6}
+/* 自测:一张大卡居中 */
+.fc-test{display:flex;flex-direction:column;align-items:center}
+.fc-prog{display:flex;align-items:center;justify-content:space-between;width:100%;margin-bottom:12px;
+  font-size:var(--u-sub);color:var(--blue-ink);font-variant-numeric:tabular-nums}
+.fc-card.big{width:min(100%,calc(220px * var(--fs)))}
+.fc-card.big .fc-front .fc-ch{font-size:calc(72px * var(--fs))}
+.fc-card.big .fc-back .fc-ch{font-size:calc(44px * var(--fs))}
+.fc-card.big .fc-back .fc-py{font-size:var(--t-word)}
+.fc-card.big .fc-writes b{font-size:var(--t-show)}
+.fc-card.big .fc-say{width:38px;height:38px;font-size:17px;right:10px;bottom:10px}
+.fc-done{text-align:center;padding:10px 0}
+.fc-done .big{font-family:var(--f-round);font-size:calc(21px * var(--fs));color:var(--ok);margin-bottom:12px}
+.fc-badlist{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:6px}
+.fc-chip{display:inline-flex;flex-direction:column;align-items:center;font-family:var(--f-kai);font-size:var(--t-show);
+  background:var(--card);border:2px solid var(--no);border-radius:10px;padding:4px 12px;line-height:1.1}
+.fc-chip small{font-family:var(--f-ui);font-size:var(--u-py);color:var(--ink-soft)}
+@media (max-width:430px){
+  .fc-grid{grid-template-columns:repeat(3,1fr);gap:8px}
+  .fc-front .fc-ch{font-size:calc(28px * var(--fs))}
+}

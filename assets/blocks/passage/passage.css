@@ -1,0 +1,10 @@
+/* passage 板块样式
+   从 REFERENCE-v47.html 原样切出,第一步只搬家、逐字不改。 */
+/* 课文四 / 开口说 */
+.p4{font-family:var(--f-kai);font-size:var(--t-lead);line-height:2.1}
+body.showpy .p4{line-height:2.5}
+.qa-row{display:flex;align-items:center;flex-wrap:wrap;gap:10px;padding:8px 0;border-top:1px dashed var(--line)}
+.qa-row .q{font-family:var(--f-kai);font-size:var(--t-sent)}
+.qa-row .a{font-family:var(--f-kai);font-size:var(--t-sent);color:var(--blue-ink);background:var(--blue-soft);
+  border-radius:9px;padding:2px 12px;display:none}
+.qa-row .a.show{display:inline-block}

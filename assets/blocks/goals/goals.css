@@ -1,0 +1,12 @@
+/* goals 板块样式
+   从 REFERENCE-v47.html 原样切出,第一步只搬家、逐字不改。 */
+/* 出发口 */
+.brief{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.brief .cell{background:var(--blue-soft);border-radius:12px;padding:14px 18px}
+.brief .cell b{display:block;font-size:var(--u-note);color:var(--blue-ink);letter-spacing:.15em;margin-bottom:4px}
+.brief .cell span{font-family:var(--f-kai);font-size:var(--t-show)}
+.goal-line{display:flex;gap:10px;align-items:baseline;padding:7px 0;border-bottom:1px dashed var(--line);flex-wrap:wrap}
+.goal-line:last-child{border:none}
+.goal-line .st{color:var(--accent);font-weight:900}
+.goal-line .zh{font-size:var(--u-body)}
+.gram-strip{font-size:var(--u-body);background:var(--blue-soft);border-radius:10px;padding:10px 14px;line-height:1.9}

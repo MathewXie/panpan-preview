@@ -1,0 +1,60 @@
+/* hanzi 板块样式
+   从 REFERENCE-v47.html 原样切出,第一步只搬家、逐字不改。 */
+/* ══ 汉字时间(结构照搬正式版:大格笔顺 + 信息板 + 字格阵) ══ */
+.hztop{display:flex;gap:14px;align-items:stretch;margin:2px 0 14px;flex-wrap:wrap}
+.hzbig{width:228px;height:228px;flex:0 0 auto;background:#fff;border:2.5px solid #E9B8A6;
+  border-radius:16px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.hzbig::before{content:"";position:absolute;left:5%;right:5%;top:50%;border-top:1.5px dashed #EFCFC2}
+.hzbig::after{content:"";position:absolute;top:5%;bottom:5%;left:50%;border-left:1.5px dashed #EFCFC2}
+.hzbig .fallback{font-family:var(--f-kai);font-size:150px;color:var(--ink);line-height:1;position:relative;z-index:2}
+.hzbig .nodata{position:absolute;left:0;right:0;bottom:8px;z-index:3;text-align:center;
+  font-size:10.5px;color:var(--accent-deep);background:rgba(255,255,255,.9);padding:2px 0}
+.hzinfo{flex:1;min-width:220px;border:2px solid var(--line);border-radius:16px;background:#F8FAFD;
+  padding:12px 18px;display:flex;flex-direction:column;justify-content:center;gap:10px}
+.hzinfo .ir{display:flex;align-items:baseline;gap:11px;flex-wrap:wrap}
+.hzinfo .ich{font-family:var(--f-kai);font-size:var(--t-char)}
+.hzinfo .iwd{font-family:var(--f-kai);font-size:var(--t-show)}
+.hzinfo .ipy{font-size:var(--u-body);color:var(--blue-ink)}
+.hzinfo .ien{font-size:var(--u-sub);color:var(--ink-soft);font-style:italic}
+.hzinfo .tip{font-size:var(--u-note);color:var(--ink-soft)}
+.hzall{display:flex;flex-wrap:wrap;gap:13px 10px}
+.hzc{width:calc(52px * var(--fs));height:calc(52px * var(--fs));display:flex;align-items:center;justify-content:center;
+  font-family:var(--f-kai);font-size:var(--t-char);background:#fff;border:2px solid var(--line);
+  border-radius:10px;cursor:pointer;user-select:none;position:relative;transition:.15s}
+.hzc:hover{border-color:var(--blue)}
+/* 选中只加描边,不填底 —— 字格阵里字才是主体,填色会盖过字形 */
+.hzc.on{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+.hzc.nodata{border-style:dashed;color:var(--ink-soft)}
+/* 当课复写的字:右上角小角标(2026-09-15) */
+.hzc .hzmark{position:absolute;top:-7px;right:-7px;font-style:normal;font-family:var(--f-ui);
+  font-size:var(--u-py);font-weight:700;line-height:1.5;padding:0 5px;border-radius:7px;
+  background:var(--accent-soft);color:var(--accent-deep);border:1px solid var(--accent)}
+.hzbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+
+
+/* 全屏:练一练 / 听写 */
+#full{position:fixed;inset:0;background:var(--bg);z-index:400;display:none;flex-direction:column}
+#full.on{display:flex}
+#full .fbar{height:56px;flex:0 0 auto;display:flex;align-items:center;gap:12px;padding:0 16px;
+  background:var(--navy);color:#EAF2FA}
+#full .ftitle{font-family:var(--f-round);font-size:19px;letter-spacing:.06em}
+#full .fprog{font-size:15px;color:#9DB8D4;font-variant-numeric:tabular-nums}
+#full .fbody{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:14px;padding:16px;overflow:auto}
+#full .fprompt{text-align:center;min-height:66px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:3px}
+#full .fprompt .fpy{font-size:calc(30px * var(--fs));color:var(--blue-ink);letter-spacing:1px}
+#full .fprompt .fword{font-family:var(--f-kai);font-size:calc(22px * var(--fs))}
+#full .fprompt .fen{font-size:var(--u-body);color:var(--ink-soft)}
+#full .ftip{max-width:460px;text-align:center;font-size:var(--u-sub);color:var(--ink-soft)}
+#dPad{width:290px;height:290px;flex:0 0 auto;position:relative;border:2.5px solid #E9B8A6;border-radius:14px;
+  background-color:#FDFBF6;
+  background-image:linear-gradient(to right,transparent 49.5%,#EFCFC2 49.5%,#EFCFC2 50.5%,transparent 50.5%),
+    linear-gradient(to bottom,transparent 49.5%,#EFCFC2 49.5%,#EFCFC2 50.5%,transparent 50.5%);
+  display:flex;align-items:center;justify-content:center}
+#dScore{font-family:var(--f-kai);font-size:calc(22px * var(--fs));color:var(--ok);margin:14px 0;text-align:center}
+
+/* 认一认 / 写一写 */
+.flips{display:grid;grid-template-columns:repeat(auto-fill,minmax(94px,1fr));gap:13px}
+.flip.on .flip-in{transform:rotateY(180deg)}
+.write-note{font-size:var(--u-note);color:var(--ink-soft);margin-top:10px}

@@ -1,0 +1,41 @@
+/* quiz 板块样式
+   从 REFERENCE-v47.html 原样切出,第一步只搬家、逐字不改。 */
+/* 小考场 */
+.exam-hint{font-size:var(--u-sub);color:var(--ink-soft);max-width:var(--measure)}
+.qhead{display:flex;align-items:center;gap:11px;margin-bottom:10px;flex-wrap:wrap}
+.qn{flex:none;width:26px;height:26px;border-radius:50%;background:var(--blue-soft);color:var(--blue-ink);
+  font-weight:800;font-size:var(--u-note);display:flex;align-items:center;justify-content:center}
+.play-audio{padding:6px 16px;font-size:var(--u-sub)}
+.audio-note{font-size:var(--u-note);color:var(--ink-soft)}
+/* 判断题:图在上、对错在下,三题横排,放不下自动折行 */
+.tf-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(196px,1fr));gap:18px}
+.tf-item{min-width:0}
+.tf-item .art{margin-bottom:10px}
+.tf-opts{justify-content:center}
+.opt.tf{min-width:64px;font-size:calc(22px * var(--fs));line-height:1.1;padding:7px 0;flex:1;max-width:96px}
+.opt.picked{border-color:var(--blue);background:var(--blue-soft);color:var(--blue-ink)}
+.opt.tf.picked small{color:var(--blue-ink)}
+.submit-bar{display:flex;align-items:center;gap:12px;justify-content:flex-end;flex-wrap:wrap}
+.fill-note{font-size:var(--u-sub);color:var(--ink-soft)}
+.abtn:disabled{opacity:.4;pointer-events:none}
+.exam-dots{display:none}
+.dot2{width:23px;height:23px;border-radius:50%;background:#E7EBF1;display:flex;align-items:center;
+  justify-content:center;font-size:11px;color:#A9B4C0;font-weight:700}
+.dot2.ok{background:var(--ok);color:#fff}.dot2.no{background:var(--no);color:#fff}
+.lockcard{background:repeating-linear-gradient(-45deg,#F6F8FB,#F6F8FB 10px,#EFF3F8 10px,#EFF3F8 20px);
+  border:1.5px dashed #C4CFDC;border-radius:12px;padding:13px 17px;margin-bottom:18px;
+  color:var(--ink-soft);font-size:var(--u-body)}
+.lockcard b{color:var(--ink)}
+.pool{display:grid;grid-template-columns:repeat(auto-fit,minmax(128px,1fr));gap:11px;margin-bottom:14px}
+.pcard{position:relative;background:#F8FAFD;border:2px solid var(--line);border-radius:12px;
+  padding:14px 10px 10px;text-align:center;transition:.25s}
+.pcard .art{margin-bottom:8px}
+.pcard.glow{border-color:var(--ok);background:#EFF6F1}
+.pcard .letter{position:absolute;top:-9px;left:-7px;width:24px;height:24px;border-radius:50%;
+  background:var(--blue);color:#fff;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center}
+.pcard .cap{font-size:var(--t-word);color:var(--ink);font-family:var(--f-kai)}
+.qrow{border-top:1px solid var(--line);padding:13px 0}
+.qrow .sent{font-family:var(--f-kai);font-size:var(--t-sent);margin-bottom:9px}
+.result{display:none;margin-top:16px;text-align:center;background:var(--blue-soft);border-radius:14px;padding:16px}
+.result.show{display:block}
+.result b{font-family:var(--f-round);font-size:calc(22px * var(--fs));color:var(--blue-ink)}
