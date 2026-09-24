@@ -31,5 +31,11 @@
 .story-material{border:1px solid var(--line);border-radius:12px;padding:20px;margin:0 0 22px;max-width:340px;background:var(--card)}
 .story-material strong{display:block;font-size:var(--u-sub);color:var(--ink-soft);margin-bottom:12px}
 .story-material>div{font-size:var(--t-sent);line-height:1.8}
+.story-material.has-table{max-width:100%;padding:12px;overflow-x:auto}
+.story-material table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:20px;letter-spacing:0}
+.story-material th,.story-material td{padding:14px 8px;border-bottom:1px solid var(--line);text-align:left;overflow-wrap:anywhere}
+.story-material th{background:var(--accent-soft);font-size:16px}
+.story-material th:nth-child(2){width:40%}
+@media(max-width:480px){.story-material table{font-size:16px}.story-material th,.story-material td{padding:12px 4px}}
 /* 台词译文行(2026-09-19):气泡里中文下面一行小字;显示与否由 body.showtr(设置「译文」)控制,见 core.css 的 .trline */
 .dtr{font-size:.78em;line-height:1.35;font-style:normal;font-family:var(--sans,sans-serif)}

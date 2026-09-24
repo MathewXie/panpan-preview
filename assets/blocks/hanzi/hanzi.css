@@ -39,15 +39,17 @@
   background:var(--navy);color:#EAF2FA}
 #full .ftitle{font-family:var(--f-round);font-size:19px;letter-spacing:.06em}
 #full .fprog{font-size:15px;color:#9DB8D4;font-variant-numeric:tabular-nums}
-#full .fbody{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+#full .fbody{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:safe center;
   gap:14px;padding:16px;overflow:auto}
+/* 每一件都不许被压扁:超高就整体滚动。原先 .fprompt 会被压到 min-height,例词行溢出去被田字格盖住(2026-09-23) */
+#full .fbody > *{flex:0 0 auto}
 #full .fprompt{text-align:center;min-height:66px;display:flex;flex-direction:column;
   align-items:center;justify-content:center;gap:3px}
 #full .fprompt .fpy{font-size:calc(30px * var(--fs));color:var(--blue-ink);letter-spacing:1px}
 #full .fprompt .fword{font-family:var(--f-kai);font-size:calc(22px * var(--fs))}
 #full .fprompt .fen{font-size:var(--u-body);color:var(--ink-soft)}
 #full .ftip{max-width:460px;text-align:center;font-size:var(--u-sub);color:var(--ink-soft)}
-#dPad{width:290px;height:290px;flex:0 0 auto;position:relative;border:2.5px solid #E9B8A6;border-radius:14px;
+#dPad{width:min(290px,78vw);height:min(290px,78vw);flex:0 0 auto;position:relative;border:2.5px solid #E9B8A6;border-radius:14px;
   background-color:#FDFBF6;
   background-image:linear-gradient(to right,transparent 49.5%,#EFCFC2 49.5%,#EFCFC2 50.5%,transparent 50.5%),
     linear-gradient(to bottom,transparent 49.5%,#EFCFC2 49.5%,#EFCFC2 50.5%,transparent 50.5%);

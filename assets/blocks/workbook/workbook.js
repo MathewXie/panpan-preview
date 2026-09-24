@@ -41,14 +41,16 @@ const WB = (() => {
   let token=0, timer=null, tickId=null;
   function stop(){
     token++; clearTimeout(timer);
-    if('speechSynthesis' in window) speechSynthesis.cancel();
+    if(typeof stopSpeak==='function') stopSpeak(); else if('speechSynthesis' in window) speechSynthesis.cancel();
     document.querySelectorAll('[data-wb-play]').forEach(b=>{b.textContent=T('wbListen'); b.removeAttribute('aria-busy');});
   }
+  /* 练习的「听一听」走引擎的 speak():同一套挑声音、哑声音拉黑、看门狗(用户反映手机上练习没声音,
+     原先这里自己造 utterance、不指定声音,在 iOS/安卓上常常不出声)。每题读两遍,题与题之间停 1.8 秒。 */
   function play(id){
-    stopSpeak(); stop();
+    stop();
     if(!('speechSynthesis' in window)) {toast(T('wbNoTts'));return;}
     const q=find(id); if(!q || !q.audio.length)return;
-    const mine=token;
+    const mine=++token;
     const queue=[...q.audio,...q.audio]; let i=0;
     const button=document.querySelector(`[data-wb-id="${id}"] [data-wb-play]`);
     if(button){button.textContent=T('wbStop');button.setAttribute('aria-busy','true');}
@@ -56,11 +58,8 @@ const WB = (() => {
     function step(){
       if(mine!==token)return;
       if(i===queue.length){stop();return;}
-      const utterance=new SpeechSynthesisUtterance(queue[i++]);
-      utterance.lang='zh-CN'; utterance.rate=SLOW ? .55 : .85;
-      utterance.onend=()=>{if(mine===token)timer=setTimeout(step,i===q.audio.length?1800:500);};
-      utterance.onerror=e=>{if(mine===token&&e.error!=='canceled'){stop();toast(T('wbTtsErr'));}};
-      speechSynthesis.speak(utterance);
+      const gap = (i+1===q.audio.length) ? 1800 : 500;
+      speak(queue[i++], ()=>{ if(mine===token) timer=setTimeout(step, gap); });
     }
     step();
   }

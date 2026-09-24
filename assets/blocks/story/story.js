@@ -13,8 +13,10 @@ function dialogHTML(t0,ti){
   return '<div class="card">'
    + (t0.art === false ? '' : artHTML('text'+(ti+1), {ratio:'16/9', story:'text'+(ti+1), ti:ti,
        cap:T('artCap')}))
-   + (t0.materials || []).map(m=>'<div class="story-material"><strong>'+m.title+'</strong>'
-       + m.lines.map(s=>'<div>'+kk(s)+'</div>').join('')+'</div>').join('')
+   + (t0.materials || []).map(m=>'<div class="story-material'+(m.rows?' has-table':'')+'"><strong>'+m.title+'</strong>'
+       + (m.rows ? '<table><thead><tr>'+m.headers.map(s=>'<th scope="col">'+kk(s)+'</th>').join('')
+           +'</tr></thead><tbody>'+m.rows.map(r=>'<tr>'+r.map(s=>'<td>'+kk(s)+'</td>').join('')+'</tr>').join('')+'</tbody></table>'
+           : m.lines.map(s=>'<div>'+kk(s)+'</div>').join(''))+'</div>').join('')
    + (t.scene ? '<div class="scene-chip t-only"><b>场景 · </b>' + t.scene + '</div>' : '')
    + '<div class="words">' + t.words.map(w=>'<button class="wtag" onclick="speak(\'' + w + '\')">' + kk(w) + '</button>').join('') + '</div>'
    + '<div id="lines-' + ti + '">' + t.lines.map(l =>

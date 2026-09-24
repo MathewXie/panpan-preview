@@ -953,7 +953,7 @@ function applyLang(root){
 let LANG_REDRAW = false;
 
 /* ═══ 设置:一个齿轮收纳全部显示选项 ═══ */
-const SET = { lang:'zh', fs:0, py:0, tr:0, sp:0, read:0, theme:0 };
+const SET = { lang:'zh', fs:0, py:1, tr:0, sp:0, read:0, theme:0 };   /* 拼音默认开(2026-09-23 用户:一级初学者进来就该看到拼音) */
 function segPaint(){
   const sl = document.getElementById('selLang');
   if(sl) sl.value = SET.lang;
