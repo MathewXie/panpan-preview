@@ -30,7 +30,7 @@ PP.block({
   kind: 'flashcard',
   key:  () => 'flash',
   icon: () => '卡',
-  sub:  (L, node) => '课文' + '一二三'[node.idx] + '的生词 ' + fcDecks(node).reduce((a, d) => a + d.length, 0) + ' 个 · '
+  sub:  (L, node) => '字词练习 ' + fcDecks(node).reduce((a, d) => a + d.length, 0) + ' 个 · '
         + (fcDecks(node).length > 1 ? fcDecks(node).length + ' 拨 · ' : '') + '两关翻牌',
   needs: [],
   render: (L, node) => {

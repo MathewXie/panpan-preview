@@ -180,7 +180,9 @@ PP.block({
         : '新认读字 ' + L.renyiren.length + ' 字 · 只认不写',
   needs: ['hanzi-writer', 'hanzi-data'],
   mount: (L, node) => hzBoot(node.mode === 'write' ? 'w' : 'r'),
-  render: (L, node) => node.mode === 'write'
+  render: (L, node) => node.mode === 'write' && !L.xiexie.length
+    ? '<div class="card"><h3 data-t="secXz"></h3><p>' + T('hzNoNew') + '</p></div>'
+    : node.mode === 'write'
     ? '<div class="card"><h3 data-t="secXz"></h3>'
       + '<div class="hzbar">'
       + '<button class="abtn ghost" onclick="hzReplay(\'w\')" data-t="btnReplay"></button>'
@@ -206,4 +208,3 @@ function hzBoot(id){
   const first = document.querySelector('#all_'+id+' .hzc');
   if(first) hzPick(first);
 }
-

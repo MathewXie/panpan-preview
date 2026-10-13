@@ -8,19 +8,24 @@
 const HERO = ['盼盼'];
 
 /* ═══ 内容构件 ═══ */
+function storyMaterialHTML(m){
+  return '<div class="story-material'+(m.rows?' has-table':'')+(m.kind==='action'?' story-action':'')+'">'
+    +(m.title?'<strong>'+m.title+'</strong>':'')
+    +(m.rows?'<table><thead><tr>'+m.headers.map(s=>'<th scope="col">'+kk(s)+'</th>').join('')
+      +'</tr></thead><tbody>'+m.rows.map(r=>'<tr>'+r.map(s=>'<td>'+kk(s)+'</td>').join('')+'</tr>').join('')+'</tbody></table>'
+      :m.lines.map(s=>'<div>'+kk(s)+'</div>').join(''))+'</div>';
+}
 function dialogHTML(t0,ti){
   const t = nzText(t0, ti);
+  const materialsAt = i => (t0.materials||[]).filter(m=>m.before_line===i).map(storyMaterialHTML).join('');
   return '<div class="card">'
    + (t0.art === false ? '' : artHTML('text'+(ti+1), {ratio:'16/9', story:'text'+(ti+1), ti:ti,
        cap:T('artCap')}))
-   + (t0.materials || []).map(m=>'<div class="story-material'+(m.rows?' has-table':'')+'"><strong>'+m.title+'</strong>'
-       + (m.rows ? '<table><thead><tr>'+m.headers.map(s=>'<th scope="col">'+kk(s)+'</th>').join('')
-           +'</tr></thead><tbody>'+m.rows.map(r=>'<tr>'+r.map(s=>'<td>'+kk(s)+'</td>').join('')+'</tr>').join('')+'</tbody></table>'
-           : m.lines.map(s=>'<div>'+kk(s)+'</div>').join(''))+'</div>').join('')
+   + (t0.materials || []).filter(m=>m.before_line===undefined).map(storyMaterialHTML).join('')
    + (t.scene ? '<div class="scene-chip t-only"><b>场景 · </b>' + t.scene + '</div>' : '')
    + '<div class="words">' + t.words.map(w=>'<button class="wtag" onclick="speak(\'' + w + '\')">' + kk(w) + '</button>').join('') + '</div>'
-   + '<div id="lines-' + ti + '">' + t.lines.map(l =>
-       '<div class="drow ' + (HERO.indexOf(l.who)>=0 ? 'side-hero' : 'side-other') + '"'
+   + '<div id="lines-' + ti + '">' + t.lines.map((l,i) =>
+       materialsAt(i)+'<div class="drow ' + (HERO.indexOf(l.who)>=0 ? 'side-hero' : 'side-other') + '"'
        + ' data-t="' + l.text + '" onclick="rowClick(this)" role="button" tabindex="0"'
        + ' aria-label="' + l.who + '说:' + l.text + '">'
        /* 说话人:头像圆 + 名字(用户 2026-09-20)。有头像图就显示图,没有的退回名字首字色圆。 */
@@ -31,7 +36,7 @@ function dialogHTML(t0,ti){
        + '</span>'
        + '<span class="bubble"><span class="dtxt">' + kk(l.text) + '</span>' + lineTr(l) + '</span>'
        + '</div>').join('')
-   + '</div>'
+   + materialsAt(t.lines.length)+'</div>'
    + '<div class="tools">'
    + '<button class="abtn seq-play" onclick="playScene(' + ti + ')">' + T('playAll') + '</button>'
    + '<button class="abtn seq-pause" style="display:none" onclick="seqPause()">' + T('pause') + '</button>'
