@@ -24,6 +24,7 @@
   --f-round:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,
     "Yuanti SC","PingFang SC","Microsoft YaHei","YouYuan",sans-serif;
   --barH:56px;
+  --tap:44px;   /* 触摸目标最小边(2026-10-17 决议 ENG07):按钮、选项、站条目都不小于 44×44 */
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 /* 滚动条槽位常驻。否则内容短的站(如末站)不出滚动条,视口宽度一变,
@@ -97,12 +98,13 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .navgrp{display:flex;align-items:center;gap:8px;flex:0 1 auto;min-width:0;
   overflow-x:auto;scrollbar-width:none}
 .navgrp::-webkit-scrollbar{display:none}
-/* 顶栏按钮统一到 38px 高;纯图标的一律 38×38 方块 */
-#bar .btn{height:38px;background:rgba(255,255,255,.10);border:1px solid var(--navy-line);
+/* 顶栏按钮统一到 44px 高(原 38,2026-10-17 放大到触摸建议线);纯图标的一律 44×44 方块 */
+#bar .btn{height:var(--tap);min-height:var(--tap);background:rgba(255,255,255,.10);border:1px solid var(--navy-line);
   border-radius:10px;padding:0 12px;font-size:14px;color:#DCE9F5;white-space:nowrap;flex:0 0 auto;
   display:inline-flex;align-items:center;justify-content:center;gap:6px;
   text-decoration:none;transition:.15s}
-#bar .btn.nav,#bar #menuBtn{width:38px;padding:0}
+#bar .btn.nav,#bar #menuBtn{width:var(--tap);min-width:var(--tap);padding:0}
+#bar .btn.ico{min-width:var(--tap)}   /* 书架、教师层等图标键在窄屏只剩图标时也不小于 44 宽 */
 #bar .btn:hover{background:var(--navy-line);border-color:#4A719C}
 #bar .btn.on{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700}
 #bar .btn:disabled{opacity:.3;pointer-events:none}
@@ -114,7 +116,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 #bar .btn .ic{font-size:14px;line-height:1}
 
 /* 站选择器:原左栏行程单的入口,并入顶栏 */
-#stopBtn{display:inline-flex;align-items:center;gap:9px;flex:0 0 auto;height:38px;
+#stopBtn{display:inline-flex;align-items:center;gap:9px;flex:0 0 auto;height:var(--tap);min-height:var(--tap);
   background:rgba(255,255,255,.10);border:1px solid var(--navy-line);border-radius:10px;
   padding:0 13px;color:#EAF2FA;transition:.15s}
 #stopBtn:hover{background:var(--navy-line);border-color:#4A719C}
@@ -157,7 +159,12 @@ body.role-student .tgrp{display:none}
   background-repeat:no-repeat;background-position:right 12px center;background-size:10px 6px}
 .sel:hover{border-color:#4A719C;background-color:var(--navy-line)}
 .sel option{background:var(--navy);color:#EAF2FA}
-.seg button{font-size:12.5px;color:#C9DAEC;padding:4px 10px;border-radius:7px;white-space:nowrap}
+.seg button{font-size:12.5px;color:#C9DAEC;padding:4px 10px;border-radius:7px;white-space:nowrap;
+  min-height:calc(var(--tap) - 8px);min-width:var(--tap)}   /* 菜单里的分段按钮:连同外框够 44 高 */
+/* 设置菜单里的链接行(装到桌面) */
+.set-link{display:inline-flex;align-items:center;min-height:var(--tap);padding:0 10px;border-radius:9px;
+  color:#EAF2FA;text-decoration:none;font-size:13.5px;flex:1}
+.set-link:hover{background:var(--navy-line)}
 .seg button:hover{background:var(--navy-line)}
 .seg button.on{background:var(--accent);color:#fff;font-weight:700}
 #logPanel{width:min(430px,calc(100vw - 16px))}
@@ -178,7 +185,7 @@ body.role-student .tgrp{display:none}
 .fs-item .nm{flex:1;font-family:var(--f-round);font-size:15px;letter-spacing:.06em;font-weight:700}
 .fs-item .tick{flex:none;font-size:12px;opacity:0}
 .fs-item.on .tick{opacity:1}
-.stop-item{display:flex;align-items:center;gap:11px;width:100%;text-align:left;
+.stop-item{display:flex;align-items:center;gap:11px;width:100%;text-align:left;min-height:var(--tap);
   padding:9px 13px;border-radius:10px;color:#C9DAEC;margin-bottom:2px;transition:.12s}
 .stop-item:hover{background:var(--navy-line)}
 .stop-item.on{background:var(--accent);color:#fff}
@@ -319,7 +326,8 @@ body.teacher span.t-only{display:inline!important}
 .dtxt{font-family:var(--f-kai);font-size:var(--t-lead);text-align:left;display:block}
 .tools{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
 .abtn{background:var(--blue);color:#fff;font-weight:700;font-size:var(--u-body);padding:8px 18px;
-  border-radius:22px;box-shadow:0 3px 0 var(--blue-ink)}
+  border-radius:22px;box-shadow:0 3px 0 var(--blue-ink);min-height:var(--tap);min-width:var(--tap);
+  display:inline-flex;align-items:center;justify-content:center;gap:6px}
 .abtn.orange{background:var(--accent);box-shadow:0 3px 0 var(--accent-deep)}
 .abtn.ghost{background:var(--card);color:var(--blue-ink);box-shadow:inset 0 0 0 2px var(--blue)}
 .abtn:active{transform:translateY(2px);box-shadow:none}

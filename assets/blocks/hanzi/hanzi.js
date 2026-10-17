@@ -121,8 +121,9 @@ function fullOpen(mode){
       charDataLoader:(c,onC)=>onC(HZ_DATA[c])}, HZ_OPT));
   dictAsk();
 }
+let dMissChar = 0;   /* 当前这个字错了几笔(2026-10-17:hz_quiz 事件要带错笔数) */
 function dictAsk(){
-  dCur = dList[dI]; dStroke = 0;
+  dCur = dList[dI]; dStroke = 0; dMissChar = 0;
   document.getElementById('fProg').textContent = (dI+1) + ' / ' + dList.length;
   const w = CHAR_WORD[dCur];
   document.getElementById('fPrompt').innerHTML =
@@ -134,8 +135,10 @@ function dictAsk(){
     dW.quiz({ showOutline: dMode==='practice',
       showHintAfterMisses: dMode==='practice' ? 2 : false,
       onCorrectStroke: d=>{ dStroke = d.strokeNum + 1; },
-      onMistake: ()=>{ dMiss++; },
-      onComplete: ()=>{ EV('hz_quiz', LID + '.hz.' + dCur, {mode:dMode, ok:true}); speak('对了'); setTimeout(dictNext, 700); } });
+      onMistake: ()=>{ dMiss++; dMissChar++; },
+      /* 词表:hz_quiz {ok, misses};练一练有轮廓提示算 practice,听写凭记忆写算 assess;pad 记在哪个面板写的 */
+      onComplete: d=>{ EV('hz_quiz', LID + '.hz.' + dCur, {ok:true, misses:dMissChar, strokes:(d && d.totalMistakes !== undefined) ? dStroke : dStroke,
+                           pad:dMode, mode:dMode === 'practice' ? 'practice' : 'assess'}); speak('对了'); setTimeout(dictNext, 700); } });
   };
   if(dW) dW.setCharacter(dCur).then(go).catch(()=>{});
   speak(dCur);
@@ -163,7 +166,7 @@ document.getElementById('fBack').onclick = fullClose;
 document.getElementById('dAgain').onclick = ()=>fullOpen(dMode);
 document.getElementById('dPlay').onclick = ()=>speak(dCur);
 document.getElementById('dHint').onclick = ()=>{ if(dW) dW.highlightStroke(dStroke); };
-document.getElementById('dSkip').onclick = ()=>{ dMiss++; dictNext(); };
+document.getElementById('dSkip').onclick = ()=>{ dMiss++; EV('hz_quiz', LID + '.hz.' + dCur, {ok:false, misses:dMissChar, skipped:true, pad:dMode, mode:dMode === 'practice' ? 'practice' : 'assess'}); dictNext(); };
 
 /* ═══ 翻卡 / 描红 ═══ */
 

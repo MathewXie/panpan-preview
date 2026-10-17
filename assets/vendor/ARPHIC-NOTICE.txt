@@ -1,0 +1,7 @@
+笔顺数据:Make Me A Hanzi / hanzi-writer-data v2.0.1,
+     衍生自 Arphic「AR PL KaitiM GB」字体,依 ARPHIC PUBLIC LICENSE 分发。
+     本课取 18 字(一级库 7 字 + 二级新字 11 字),未修改笔画数据本身。
+     随产品分发时须一并附上 ARPHICPL.TXT。
+     ARPHICPL.TXT 原文(2026-10-17 取自 npm hanzi-writer-data@2.0.1 包根目录,未改一字,
+     sha256 5590533436c70f10f2f524ee61456238c290175c6662fbe1c700b5f038a6d328)
+     放在本目录,build.py 分离式构建复制到 dist/assets/vendor/ARPHICPL.TXT,自包含构建内嵌为 text/plain 块。

@@ -1,0 +1,34 @@
+{
+  "id": "./",
+  "name": "盼盼中文",
+  "short_name": "盼盼中文",
+  "lang": "zh-CN",
+  "dir": "ltr",
+  "description": "盼盼中文 · HSK 一级 · 十五课",
+  "start_url": "hsk1-v6/index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#24476E",
+  "background_color": "#f8f6f0",
+  "icons": [
+    {
+      "src": "icons/panpan-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/panpan-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/panpan-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

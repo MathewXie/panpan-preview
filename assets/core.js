@@ -89,12 +89,34 @@ function wordEn(w){
    本样张无后端,事件留在内存并可在「学习记录」面板查看/导出;
    接平台时把 push 换成 PP.logEvent(kind, lessonId, contentId, payload) 即可。 */
 const EVENTS = [];
+/* 2026-10-17(决议 ENG07,对齐 docs/决议/2026-09-07-学习事件词表.md 第二节):每条事件带 mode 与 attempt。
+   作答类(drill_answer / exam_answer / hz_quiz)按内容 ID 计第几次,计数落本机(panpan.attempts.…),刷新不归零;
+   第 1 次默认 assess(计分),之后默认 practice(重做);片段显式传了数值 attempt 或 mode 就照传的。
+   老师端只认 attempt=1 且 mode=assess(platform.js applyLocal 同一判据)。 */
+const EV_ANSWER_KINDS = {drill_answer:1, exam_answer:1, hz_quiz:1};
+let EV_ATTEMPTS = null;
+function evAttempts(){
+  if(!EV_ATTEMPTS) EV_ATTEMPTS = (window.PP && PP.readState) ? (PP.readState('attempts', LID, L.content_version, null) || {}) : {};
+  return EV_ATTEMPTS;
+}
 function EV(kind, contentId, payload){
+  payload = Object.assign({}, payload || {});
+  if(EV_ANSWER_KINDS[kind]){
+    if(typeof payload.attempt !== 'number'){
+      const a = evAttempts(), id = contentId || kind;
+      a[id] = (a[id] || 0) + 1; payload.attempt = a[id];
+      if(window.PP && PP.writeState) PP.writeState('attempts', LID, L.content_version, a);
+    }
+    if(!payload.mode) payload.mode = payload.attempt > 1 ? 'practice' : 'assess';
+  } else {
+    if(!payload.mode) payload.mode = 'assess';
+    if(typeof payload.attempt !== 'number') payload.attempt = 1;
+  }
   const ev = {
     lesson_id: LID,
     content_id: contentId || null,
     kind: kind,
-    payload: payload || {},
+    payload: payload,
     occurred_at: new Date().toISOString()
   };
   EVENTS.push(ev);
@@ -437,6 +459,19 @@ function rove(e, group, sel){
 /* ═══ 行程单(顶栏入口 + 垂直单列) ═══ */
 let cur = 0;
 const visited = new Set();
+/* 当前站与走过的站落本机(2026-10-17 决议 ENG07):键 panpan.nav.<账号>.<学习者>.<课>.<内容版本>,
+   刷新、关掉再开、装到桌面后都回到上次那一站;改了课文(内容版本变)从头开始,旧记录留着不删。 */
+function navSave(){
+  if(window.PP && PP.writeState)
+    PP.writeState('nav', LID, L.content_version, {cur:cur, visited:[...visited], at:new Date().toISOString()});
+}
+function navLoad(){
+  const s = (window.PP && PP.readState) ? PP.readState('nav', LID, L.content_version, null) : null;
+  if(!s || typeof SECTIONS === 'undefined') return false;
+  (Array.isArray(s.visited) ? s.visited : []).forEach(i => { if(Number.isInteger(i) && i >= 0 && i < SECTIONS.length) visited.add(i); });
+  if(Number.isInteger(s.cur) && s.cur >= 0 && s.cur < SECTIONS.length){ cur = s.cur; return true; }
+  return false;
+}
 /* 行程单条目:序号并进标题,只留第一层名称,下面接一行母语 */
 function stopName(i){
   const s = SECTIONS[i];
@@ -558,8 +593,10 @@ addEventListener('resize', ()=>{
 
 function pickStop(i){ closeStops(); goStop(i); }
 function goStop(i){
-  cur = i; visited.add(i);
-  EV('stop_view', LID + '.stop' + (i+1), {name:SECTIONS[i].name});
+  cur = i; visited.add(i); navSave();
+  /* 词表(2026-09-07):content_id = <课>.<站键>,payload {idx, key};没有 key 的站退回 stopN */
+  const key = SECTIONS[i].key || ('stop' + (i+1));
+  EV('stop_view', LID + '.' + key, {idx:i, key:key, name:SECTIONS[i].name});
   if(mode === 'one'){ renderOne(); window.scrollTo({top:0}); }
   else { const el = document.getElementById('sec'+i); if(el) el.scrollIntoView({block:'start'}); }
   syncHead();
@@ -608,7 +645,7 @@ function renderAll(){
   c.innerHTML = SECTIONS.map((s,i)=>'<div class="stopsec" id="sec'+i+'">' + secHead(i)
     + '<div class="cards">' + s.render() + '</div></div>').join('');
   SECTIONS.forEach(s=>{ if(s.after) s.after(); });
-  SECTIONS.forEach((s,i)=>visited.add(i));
+  SECTIONS.forEach((s,i)=>visited.add(i)); navSave();
   kkAll(c); initArts(c); PP.fire(PP.afterRender); applyLang(c);
 }
 /* 换节动画。三条路径共用:顶栏箭头、底部按钮、边缘箭头、滑动。
@@ -847,6 +884,42 @@ const I18N = {
  caution:'Perhatian: ', wbConfirm:'Konfirmasi', wbPickTone:'Pilih nada:', wbNeedAll:'Jawab semua 20 soal untuk mengirim',
  wbExamIntro:'Simulasi ujian format HSK Level 1: {l} soal simakan dan {r} soal bacaan, total {n} soal, waktu {m} menit.', wbExamRules:'Waktu mulai dihitung saat menekan Mulai; jangan meninggalkan ujian di tengah jalan. Kirim setelah {n} soal terjawab; otomatis dikirim saat waktu habis. Nilai muncul setelah dikirim.', wbExamStart:'Mulai', wbTimeLeft:'Sisa {t}', wbNoLeave:'Waktu berjalan — jangan pergi', wbTimeUp:'Waktu habis, otomatis dikirim.'}
 };
+/* @@INSTALL_I18N_BEGIN@@
+   安装引导页四语文案(2026-10-17 决议 ENG07 第七条)。文案只维护这一份:
+   课内页设置菜单的「装到桌面」链接用它;dist/hsk1-v6/install.html 由 tools/lesson_preview.py build_v6_index()
+   直接从这两个标记之间抄走这段 JS,再合并进各自的 I18N。km 为拟稿,待母语者核对。 */
+const INSTALL_I18N = {
+ zh:{installLink:'📲 装到桌面', installTitle:'把盼盼中文装到平板桌面', installLead:'装到桌面以后,点桌面上的盼盼图标就能打开,没有浏览器地址栏,像一个 App;下载过的课断网也能学。',
+     installHow:'安卓平板 · Chrome 浏览器', installStep1:'用 Chrome 打开这个网址。不要在微信、WhatsApp 里打开,那里装不了。',
+     installStep2:'点右上角的「⋮」,选「添加到主屏幕」或「安装应用」。如果页面下方自己弹出了「安装」,直接点它。',
+     installStep3:'回到桌面,点盼盼的图标打开。第一次打开最好连着网。',
+     installOfflineT:'断网也能学', installOffline:'打开课程目录,点每一课的「下载」;显示「已下载」以后,这一课不连网也能打开。每课大约 28 MB,下载时请连 Wi-Fi。',
+     installBtn:'安装到桌面', installDone:'已经装到桌面了', installNoPrompt:'没有出现安装按钮?可能已经装过,或这个浏览器不支持;请按上面第二步手动添加。',
+     installBack:'回到课程目录', installLang:'语言'},
+ en:{installLink:'📲 Add to home screen', installTitle:'Put Panpan Chinese on the tablet home screen', installLead:'Once added, tap the Panpan icon on the home screen to open it like an app, with no browser bar. Lessons you have downloaded work without internet.',
+     installHow:'Android tablet · Chrome', installStep1:'Open this address in Chrome. It cannot be installed from inside WeChat or WhatsApp.',
+     installStep2:'Tap the "⋮" menu at the top right and choose "Add to Home screen" or "Install app". If an "Install" bar appears at the bottom, just tap it.',
+     installStep3:'Go back to the home screen and tap the Panpan icon. Stay online the first time you open it.',
+     installOfflineT:'Works offline', installOffline:'Open the lesson list and tap "Download" on each lesson. Once it says "Downloaded", that lesson opens without internet. Each lesson is about 28 MB, so use Wi-Fi.',
+     installBtn:'Install to home screen', installDone:'Already on the home screen', installNoPrompt:'No install button? It may already be installed, or this browser does not support it. Use step 2 above to add it by hand.',
+     installBack:'Back to lessons', installLang:'Language'},
+ id:{installLink:'📲 Pasang di layar utama', installTitle:'Pasang Panpan Chinese di layar utama tablet', installLead:'Setelah dipasang, ketuk ikon Panpan di layar utama untuk membukanya seperti aplikasi, tanpa bilah peramban. Pelajaran yang sudah diunduh bisa dipakai tanpa internet.',
+     installHow:'Tablet Android · Chrome', installStep1:'Buka alamat ini di Chrome. Tidak bisa dipasang dari dalam WeChat atau WhatsApp.',
+     installStep2:'Ketuk menu "⋮" di kanan atas, lalu pilih "Tambahkan ke layar utama" atau "Instal aplikasi". Jika muncul bilah "Instal" di bawah, ketuk saja.',
+     installStep3:'Kembali ke layar utama dan ketuk ikon Panpan. Saat pertama kali dibuka, tetap terhubung ke internet.',
+     installOfflineT:'Bisa dipakai tanpa internet', installOffline:'Buka daftar pelajaran dan ketuk "Unduh" pada tiap pelajaran. Setelah tertulis "Sudah diunduh", pelajaran itu bisa dibuka tanpa internet. Tiap pelajaran sekitar 28 MB, gunakan Wi-Fi.',
+     installBtn:'Pasang di layar utama', installDone:'Sudah ada di layar utama', installNoPrompt:'Tombol pasang tidak muncul? Mungkin sudah terpasang, atau peramban ini tidak mendukung. Ikuti langkah 2 di atas secara manual.',
+     installBack:'Kembali ke daftar pelajaran', installLang:'Bahasa'},
+ km:{installLink:'📲 ដាក់លើអេក្រង់ដើម', installTitle:'ដាក់ Panpan Chinese លើអេក្រង់ដើមរបស់ថេប្លេត', installLead:'បន្ទាប់ពីដាក់រួច ចុចរូបតំណាង Panpan លើអេក្រង់ដើម ដើម្បីបើកដូចកម្មវិធី ដោយគ្មានរបារកម្មវិធីរុករក។ មេរៀនដែលបានទាញយកអាចប្រើបានដោយគ្មានអ៊ីនធឺណិត។',
+     installHow:'ថេប្លេត Android · Chrome', installStep1:'បើកអាសយដ្ឋាននេះក្នុង Chrome។ មិនអាចដំឡើងពីក្នុង WeChat ឬ WhatsApp បានទេ។',
+     installStep2:'ចុចម៉ឺនុយ "⋮" នៅជ្រុងខាងលើស្តាំ រួចជ្រើស "Add to Home screen" ឬ "Install app"។ បើមានរបារ "Install" លេចឡើងខាងក្រោម ចុចវាតែម្តង។',
+     installStep3:'ត្រឡប់ទៅអេក្រង់ដើម រួចចុចរូបតំណាង Panpan។ ពេលបើកលើកដំបូង សូមភ្ជាប់អ៊ីនធឺណិត។',
+     installOfflineT:'ប្រើបានដោយគ្មានអ៊ីនធឺណិត', installOffline:'បើកបញ្ជីមេរៀន រួចចុច "ទាញយក" លើមេរៀននីមួយៗ។ ពេលបង្ហាញ "បានទាញយក" មេរៀននោះអាចបើកបានដោយគ្មានអ៊ីនធឺណិត។ មេរៀននីមួយៗប្រហែល 28 MB សូមប្រើ Wi-Fi។',
+     installBtn:'ដំឡើងលើអេក្រង់ដើម', installDone:'មាននៅលើអេក្រង់ដើមរួចហើយ', installNoPrompt:'គ្មានប៊ូតុងដំឡើង? ប្រហែលជាបានដំឡើងរួចហើយ ឬកម្មវិធីរុករកនេះមិនគាំទ្រ។ សូមធ្វើតាមជំហានទី ២ ខាងលើដោយដៃ។',
+     installBack:'ត្រឡប់ទៅបញ្ជីមេរៀន', installLang:'ភាសា'}
+};
+/* @@INSTALL_I18N_END@@ */
+Object.keys(INSTALL_I18N).forEach(l => { if(I18N[l]) Object.assign(I18N[l], INSTALL_I18N[l]); });
 /* ── 板块名:孩子看得懂的说法 + 副语言指示 ──
    主行永远是中文(这是中文课);副行是学生母语的提示,默认显示,可在设置里关。
    候选语种:英语 / 印尼语 / 高棉语,账户建档时选定,之后可改。
@@ -957,7 +1030,24 @@ function applyLang(root){
 let LANG_REDRAW = false;
 
 /* ═══ 设置:一个齿轮收纳全部显示选项 ═══ */
-const SET = { lang:'zh', fs:0, py:1, tr:0, sp:0, read:0, theme:0 };   /* 拼音默认开(2026-09-23 用户:一级初学者进来就该看到拼音) */
+/* 默认值正本(2026-10-17 决议 ENG07):中文界面、拼音开(2026-09-23 用户:一级初学者进来就该看到拼音)、
+   译文关、常速、单站、白天。platform.js 的 DEFAULTS 逐键与此对齐。
+   实际值从 PP.getSettings()(localStorage pp.settings)读回,刷新、换课、装到桌面后都保留;改一项就写回。
+   夜间模式:用户从没点过主题时,跟随系统的深浅色偏好;点过一次就以点的为准。 */
+const SET_DEFAULT = { lang:'zh', fs:0, py:1, tr:0, sp:0, read:0, theme:0 };
+const SET = Object.assign({}, SET_DEFAULT);
+(function(){
+  const saved = (window.PP && PP.getSettings) ? PP.getSettings() : {};
+  Object.keys(SET_DEFAULT).forEach(k => {
+    if(saved[k] === undefined || saved[k] === null) return;
+    SET[k] = (k === 'lang') ? String(saved[k]) : (+saved[k] || 0);
+  });
+  if(['zh','en','id','km'].indexOf(SET.lang) < 0) SET.lang = 'zh';
+  let raw = {};
+  try{ raw = JSON.parse(localStorage.getItem(PP.LS.settings)) || {}; }catch(e){}
+  if(raw.theme === undefined && window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) SET.theme = 1;
+  LANG = SET.lang; SLOW = !!SET.sp;
+})();
 function segPaint(){
   const sl = document.getElementById('selLang');
   if(sl) sl.value = SET.lang;
@@ -971,7 +1061,8 @@ function segPaint(){
 }
 function setOpt(key, v){
   SET[key] = (key === 'lang') ? v : +v;   /* 语种是字符串,别转数字 */
-  EV('setting', LID + '.set.' + key, {value:SET[key]});
+  if(window.PP && PP.setSettings){ try{ PP.setSettings({[key]: SET[key]}); }catch(e){} }   /* 落本机,下次打开还是这样 */
+  EV('setting', LID + '.set.' + key, {k:key, v:SET[key], value:SET[key]});
   if(key==='lang'){
     LANG = v; applyLang();
     if(v === 'km') toast('高棉语为拟稿,待母语者核对');

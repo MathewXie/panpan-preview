@@ -4,6 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>盼盼中文</title>
+<!-- 装到桌面(2026-10-17 决议 ENG07):清单与图标在站点根目录,由 tools/lesson_preview.py build_v6_index() 生成;
+     theme-color 取 docs/10 的 --navy。注册 service worker 的脚本在 engine/boot.js 末尾。 -->
+<link rel="manifest" href="../manifest.webmanifest">
+<meta name="theme-color" content="#24476E">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="icon" href="../icons/panpan-192.png" type="image/png">
+<link rel="apple-touch-icon" href="../icons/panpan-192.png">
 <link rel="stylesheet" href="../assets/core.css">
 <link rel="stylesheet" href="../assets/blocks/story/story.css">
 <link rel="stylesheet" href="../assets/blocks/hanzi/hanzi.css">
@@ -71,6 +78,7 @@
     <span class="seg" id="segRead"><button data-v="0" data-t="readOne"></button><button data-v="1" data-t="readAll"></button></span></div>
   <div class="set-row"><span class="k" data-t="themeLabel"></span>
     <span class="seg" id="segTheme"><button data-v="0" data-t="themeDay"></button><button data-v="1" data-t="themeNight"></button></span></div>
+  <div class="set-row"><a class="set-link" id="installLink" href="../hsk1-v6/install.html" data-t="installLink"></a></div>
 </div>
 <div id="logPanel" class="menu">
   <div class="cap" data-t="capLog"></div>

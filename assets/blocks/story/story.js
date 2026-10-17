@@ -140,7 +140,7 @@ function drillAns(ci, kind, o){
   if(prev && prev.good) return;
   const good = o === (kind === 'pick' ? L.drills[ci].pick.answer : L.drills[ci].fill.answer);
   STATE.drill[key] = {good:good, pick:o};
-  EV('drill_answer', LID + '.drill.' + key, {correct:good, pick:o, first_try:!prev});
+  EV('drill_answer', LID + '.drill.' + key, {ok:good, pick:o});   /* 词表:ok / pick;attempt 由 EV 计次 */
   drillPaint();
   if(kind === 'pick') speak(good ? '对了' : '再听一听');
 }

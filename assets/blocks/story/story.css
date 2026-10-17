@@ -14,7 +14,7 @@
   box-shadow:0 4px 0 var(--accent-deep);margin-bottom:12px}
 .playword:active{transform:translateY(2px);box-shadow:none}
 .opts{display:flex;gap:9px;flex-wrap:wrap}
-.opt{min-width:46px;padding:6px 14px;border-radius:11px;background:var(--card);border:2px solid var(--line);
+.opt{min-width:var(--tap,44px);min-height:var(--tap,44px);padding:6px 14px;border-radius:11px;background:var(--card);border:2px solid var(--line);
   font-weight:700;font-size:var(--t-word);font-family:var(--f-kai);transition:.15s}
 .opt:hover{border-color:var(--blue)}
 .opt.ok{background:var(--ok);border-color:var(--ok);color:#fff}

@@ -126,7 +126,8 @@ const WB = (() => {
     state.submitted=true; state.examEnd=Date.now();
     state.rounds.push({at:new Date().toISOString(),answers:{...state.exam},score:score(),timeout:!!timeout});
     save();paint();
-    EV('exam_done',LID+'.workbook',{score:score(),total:items.length,attempt:state.rounds.length,timeout:!!timeout,seconds:Math.round((state.examEnd-state.examStart)/1000)});
+    EV('exam_done',LID+'.workbook',{right:score(),score:score(),total:items.length,items:items.map(q=>({id:q.id,pick:state.exam[q.id]||null,ok:state.exam[q.id]===q.answer})),
+      attempt:state.rounds.length,mode:state.rounds.length>1?'practice':'assess',timeout:!!timeout,seconds:Math.round((state.examEnd-state.examStart)/1000)});
     if(timeout) toast(T('wbTimeUp'));
   }
   function paint(){
@@ -174,12 +175,13 @@ const WB = (() => {
     const good=q.type==='read'||value===normalize(q.answer);
     const previous=state.practice[q.id];
     state.practice[q.id]={value,checked:true,good};
-    EV('drill_answer',LID+'.'+q.id,{mode:'workbook',good,attempt:previous?.checked?'retry':'first'});
+    /* 词表(2026-09-07):作答统一 ok 字段;attempt 由 core.js EV 按题号计次(数值),首答 assess、再答 practice */
+    EV('drill_answer',LID+'.'+q.id,{ok:good,pick:value,station:'practice'});
     save();paint();
   }
   function start(root){
     state.examStart=Date.now(); state.examEnd=null; state.submitted=false; state.exam={};
-    save(); EV('exam_answer',LID+'.workbook',{mode:'exam-start',attempt:state.rounds.length+1,minutes});
+    save(); EV('exam_retry',LID+'.workbook',{mode:'practice',phase:'start',round:state.rounds.length+1,minutes});   /* 开考本身不是作答,不进首答统计 */
     const wrap=document.createElement('div'); wrap.innerHTML=render('exam');
     root.replaceWith(wrap.firstElementChild); mount();
   }
@@ -198,7 +200,7 @@ const WB = (() => {
         if(b.hasAttribute('data-wb-play')) {b.hasAttribute('aria-busy')?stop():play(q.id);return;}
         if(b.hasAttribute('data-wb-value')){
           if(el.dataset.wbPractice==='true')practiceAnswer(q,b.dataset.wbValue);
-          else if(!state.submitted){state.exam[q.id]=b.dataset.wbValue;save();paint();EV('exam_answer',LID+'.workbook.'+q.id,{pick:b.dataset.wbValue,mode:'workbook',attempt:state.rounds.length+1});}
+          else if(!state.submitted){state.exam[q.id]=b.dataset.wbValue;save();paint();EV('exam_answer',LID+'.workbook.'+q.id,{ok:b.dataset.wbValue===q.answer,pick:b.dataset.wbValue,round:state.rounds.length+1});}
         }
         if(b.hasAttribute('data-wb-check')){
           const raw=el.querySelector('input').value, v=normalize(raw);
@@ -209,17 +211,17 @@ const WB = (() => {
           const st=state.practice[q.id]; if(!st||st.stage!=='tone')return;
           const marked=toneMark(st.value+b.dataset.wbTone), good=marked===normalize(q.answer);
           state.practice[q.id]={value:marked,final:marked,checked:true,good};
-          EV('drill_answer',LID+'.'+q.id,{mode:'workbook',good,attempt:'first',tone:+b.dataset.wbTone});
+          EV('drill_answer',LID+'.'+q.id,{ok:good,pick:marked,tone:+b.dataset.wbTone,station:'practice'});
           save();paint();
         }
         if(b.hasAttribute('data-wb-read'))practiceAnswer(q,'read');
-        if(b.hasAttribute('data-wb-reset')){delete state.practice[q.id];save();paint();EV('drill_retry',LID+'.'+q.id,{mode:'workbook'});}
+        if(b.hasAttribute('data-wb-reset')){delete state.practice[q.id];save();paint();EV('drill_retry',LID+'.'+q.id,{mode:'practice'});}
         if(b.hasAttribute('data-wb-submit')&&answered()===items.length&&!state.submitted) submit(false);
         if(b.hasAttribute('data-wb-retry')){
           const wrong=items.filter(q=>state.exam[q.id]!==q.answer);
           (wrong.length?wrong:items).forEach(q=>delete state.exam[q.id]);
           state.submitted=false; state.examStart=Date.now(); state.examEnd=null;   /* 重做重新计时 */
-          save();paint();EV('exam_retry',LID+'.workbook',{mode:'workbook',attempt:state.rounds.length+1});
+          save();paint();EV('exam_retry',LID+'.workbook',{mode:'practice',round:state.rounds.length+1});
         }
       });
     });

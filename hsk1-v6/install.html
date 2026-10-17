@@ -1,0 +1,76 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>盼盼中文 · 装到桌面</title>
+<link rel="manifest" href="../manifest.webmanifest"><meta name="theme-color" content="#24476E"><meta name="mobile-web-app-capable" content="yes">
+<link rel="icon" href="../icons/panpan-192.png" type="image/png"><link rel="apple-touch-icon" href="../icons/panpan-192.png">
+<style>*{box-sizing:border-box}body{margin:0;background:#f8f6f0;color:#253e37;font:17px/1.7 system-ui,"Microsoft YaHei","Khmer OS",sans-serif}main{max-width:720px;margin:auto;padding:32px 20px 60px}
+.langs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px}.langs button{min-height:44px;min-width:44px;padding:0 14px;border-radius:12px;border:2px solid #c9d2cc;background:#fff;font:inherit;font-size:15px;cursor:pointer}.langs button.on{background:#24476E;border-color:#24476E;color:#fff}
+h1{font-size:clamp(26px,5vw,36px);margin:6px 0 10px}.lead{color:#52665d;margin:0 0 24px}h2{font-size:19px;margin:26px 0 10px}ol{padding-left:22px}li{margin:8px 0}
+.icon{width:96px;height:96px;border-radius:22px;display:block;margin:0 0 14px;box-shadow:0 4px 14px rgba(36,71,110,.18)}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 22px;border-radius:14px;background:#24476E;color:#fff;border:0;font:inherit;font-size:17px;cursor:pointer;text-decoration:none;margin:8px 10px 8px 0}.btn.ghost{background:#fff;color:#28755d;border:2px solid #28755d}
+.note{background:#fff;border:1px solid #dce4d8;border-radius:14px;padding:14px 18px;margin:18px 0;color:#52665d;font-size:15px}[hidden]{display:none!important}
+@media(prefers-color-scheme:dark){body{background:#151a1f;color:#e6ebe8}.lead,.note{color:#a9b5ad}.note,.langs button,.btn.ghost{background:#1f262c;border-color:#303a42}.langs button{color:#e6ebe8}}
+</style>
+<main>
+<div class="langs" id="langs"><button data-l="zh">中文</button><button data-l="en">English</button><button data-l="id">Bahasa Indonesia</button><button data-l="km">ខ្មែរ</button></div>
+<img class="icon" src="../icons/panpan-192.png" alt="">
+<h1 data-t="installTitle"></h1><p class="lead" data-t="installLead"></p>
+<p><button class="btn" id="installBtn" data-t="installBtn" hidden></button><span class="btn ghost" id="installDone" data-t="installDone" hidden></span></p>
+<h2 data-t="installHow"></h2>
+<ol><li data-t="installStep1"></li><li data-t="installStep2"></li><li data-t="installStep3"></li></ol>
+<div class="note" id="noPrompt" data-t="installNoPrompt"></div>
+<h2 data-t="installOfflineT"></h2><p data-t="installOffline"></p>
+<p><a class="btn ghost" href="index.html" data-t="installBack"></a></p>
+</main>
+<script>
+const INSTALL_I18N = {
+ zh:{installLink:'📲 装到桌面', installTitle:'把盼盼中文装到平板桌面', installLead:'装到桌面以后,点桌面上的盼盼图标就能打开,没有浏览器地址栏,像一个 App;下载过的课断网也能学。',
+     installHow:'安卓平板 · Chrome 浏览器', installStep1:'用 Chrome 打开这个网址。不要在微信、WhatsApp 里打开,那里装不了。',
+     installStep2:'点右上角的「⋮」,选「添加到主屏幕」或「安装应用」。如果页面下方自己弹出了「安装」,直接点它。',
+     installStep3:'回到桌面,点盼盼的图标打开。第一次打开最好连着网。',
+     installOfflineT:'断网也能学', installOffline:'打开课程目录,点每一课的「下载」;显示「已下载」以后,这一课不连网也能打开。每课大约 28 MB,下载时请连 Wi-Fi。',
+     installBtn:'安装到桌面', installDone:'已经装到桌面了', installNoPrompt:'没有出现安装按钮?可能已经装过,或这个浏览器不支持;请按上面第二步手动添加。',
+     installBack:'回到课程目录', installLang:'语言'},
+ en:{installLink:'📲 Add to home screen', installTitle:'Put Panpan Chinese on the tablet home screen', installLead:'Once added, tap the Panpan icon on the home screen to open it like an app, with no browser bar. Lessons you have downloaded work without internet.',
+     installHow:'Android tablet · Chrome', installStep1:'Open this address in Chrome. It cannot be installed from inside WeChat or WhatsApp.',
+     installStep2:'Tap the "⋮" menu at the top right and choose "Add to Home screen" or "Install app". If an "Install" bar appears at the bottom, just tap it.',
+     installStep3:'Go back to the home screen and tap the Panpan icon. Stay online the first time you open it.',
+     installOfflineT:'Works offline', installOffline:'Open the lesson list and tap "Download" on each lesson. Once it says "Downloaded", that lesson opens without internet. Each lesson is about 28 MB, so use Wi-Fi.',
+     installBtn:'Install to home screen', installDone:'Already on the home screen', installNoPrompt:'No install button? It may already be installed, or this browser does not support it. Use step 2 above to add it by hand.',
+     installBack:'Back to lessons', installLang:'Language'},
+ id:{installLink:'📲 Pasang di layar utama', installTitle:'Pasang Panpan Chinese di layar utama tablet', installLead:'Setelah dipasang, ketuk ikon Panpan di layar utama untuk membukanya seperti aplikasi, tanpa bilah peramban. Pelajaran yang sudah diunduh bisa dipakai tanpa internet.',
+     installHow:'Tablet Android · Chrome', installStep1:'Buka alamat ini di Chrome. Tidak bisa dipasang dari dalam WeChat atau WhatsApp.',
+     installStep2:'Ketuk menu "⋮" di kanan atas, lalu pilih "Tambahkan ke layar utama" atau "Instal aplikasi". Jika muncul bilah "Instal" di bawah, ketuk saja.',
+     installStep3:'Kembali ke layar utama dan ketuk ikon Panpan. Saat pertama kali dibuka, tetap terhubung ke internet.',
+     installOfflineT:'Bisa dipakai tanpa internet', installOffline:'Buka daftar pelajaran dan ketuk "Unduh" pada tiap pelajaran. Setelah tertulis "Sudah diunduh", pelajaran itu bisa dibuka tanpa internet. Tiap pelajaran sekitar 28 MB, gunakan Wi-Fi.',
+     installBtn:'Pasang di layar utama', installDone:'Sudah ada di layar utama', installNoPrompt:'Tombol pasang tidak muncul? Mungkin sudah terpasang, atau peramban ini tidak mendukung. Ikuti langkah 2 di atas secara manual.',
+     installBack:'Kembali ke daftar pelajaran', installLang:'Bahasa'},
+ km:{installLink:'📲 ដាក់លើអេក្រង់ដើម', installTitle:'ដាក់ Panpan Chinese លើអេក្រង់ដើមរបស់ថេប្លេត', installLead:'បន្ទាប់ពីដាក់រួច ចុចរូបតំណាង Panpan លើអេក្រង់ដើម ដើម្បីបើកដូចកម្មវិធី ដោយគ្មានរបារកម្មវិធីរុករក។ មេរៀនដែលបានទាញយកអាចប្រើបានដោយគ្មានអ៊ីនធឺណិត។',
+     installHow:'ថេប្លេត Android · Chrome', installStep1:'បើកអាសយដ្ឋាននេះក្នុង Chrome។ មិនអាចដំឡើងពីក្នុង WeChat ឬ WhatsApp បានទេ។',
+     installStep2:'ចុចម៉ឺនុយ "⋮" នៅជ្រុងខាងលើស្តាំ រួចជ្រើស "Add to Home screen" ឬ "Install app"។ បើមានរបារ "Install" លេចឡើងខាងក្រោម ចុចវាតែម្តង។',
+     installStep3:'ត្រឡប់ទៅអេក្រង់ដើម រួចចុចរូបតំណាង Panpan។ ពេលបើកលើកដំបូង សូមភ្ជាប់អ៊ីនធឺណិត។',
+     installOfflineT:'ប្រើបានដោយគ្មានអ៊ីនធឺណិត', installOffline:'បើកបញ្ជីមេរៀន រួចចុច "ទាញយក" លើមេរៀននីមួយៗ។ ពេលបង្ហាញ "បានទាញយក" មេរៀននោះអាចបើកបានដោយគ្មានអ៊ីនធឺណិត។ មេរៀននីមួយៗប្រហែល 28 MB សូមប្រើ Wi-Fi។',
+     installBtn:'ដំឡើងលើអេក្រង់ដើម', installDone:'មាននៅលើអេក្រង់ដើមរួចហើយ', installNoPrompt:'គ្មានប៊ូតុងដំឡើង? ប្រហែលជាបានដំឡើងរួចហើយ ឬកម្មវិធីរុករកនេះមិនគាំទ្រ។ សូមធ្វើតាមជំហានទី ២ ខាងលើដោយដៃ។',
+     installBack:'ត្រឡប់ទៅបញ្ជីមេរៀន', installLang:'ភាសា'}
+};
+(function(){
+  let lang = 'zh';
+  try{ const s = JSON.parse(localStorage.getItem('pp.settings') || '{}'); if(INSTALL_I18N[s.lang]) lang = s.lang; }catch(e){}
+  function apply(){
+    document.documentElement.lang = lang === 'zh' ? 'zh-CN' : lang;
+    document.querySelectorAll('[data-t]').forEach(el => { el.textContent = INSTALL_I18N[lang][el.dataset.t] || INSTALL_I18N.zh[el.dataset.t] || ''; });
+    document.querySelectorAll('#langs button').forEach(b => b.classList.toggle('on', b.dataset.l === lang));
+  }
+  document.querySelectorAll('#langs button').forEach(b => { b.onclick = () => {
+    lang = b.dataset.l; apply();
+    try{ const s = JSON.parse(localStorage.getItem('pp.settings') || '{}'); s.lang = lang; localStorage.setItem('pp.settings', JSON.stringify(s)); }catch(e){}
+  }; });
+  apply();
+  const btn = document.getElementById('installBtn'), done = document.getElementById('installDone'), note = document.getElementById('noPrompt');
+  const standalone = (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
+  if(standalone){ done.hidden = false; note.hidden = true; }
+  let deferred = null;
+  window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferred = e; btn.hidden = false; note.hidden = true; });
+  window.addEventListener('appinstalled', () => { deferred = null; btn.hidden = true; done.hidden = false; note.hidden = true; });
+  btn.onclick = async () => { if(!deferred) return; deferred.prompt(); try{ await deferred.userChoice; }catch(e){} deferred = null; btn.hidden = true; };
+  if('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) navigator.serviceWorker.register('../sw.js').catch(() => {});
+})();
+</script></html>

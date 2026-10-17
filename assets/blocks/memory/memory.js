@@ -3,7 +3,11 @@
 /* ═══ 记忆翻牌(移植正式版 memInit/memLayout/memStart/memTap/memWin) ═══
    正式版配对的是「中文词 ↔ 英文释义」;二级数据包未提供词的英文,
    本样张改配「中文词 ↔ 拼音」——数据齐全,并顺带复习本课注音。 */
-const MEM = {}, MEM_BEST = {};
+const MEM = {};
+/* 翻牌最快成绩落本机(2026-10-17 决议 ENG07):键 panpan.membest.<账号>.<学习者>.<课>.<内容版本>,
+   值 {牌桌id_r关:秒}。刷新、关掉再开仍显示「最快一次」;改课文换钥匙,旧成绩留着。 */
+const MEM_BEST = (window.PP && PP.readState) ? (PP.readState('membest', LID, L.content_version, null) || {}) : {};
+function memBestSave(){ if(window.PP && PP.writeState) PP.writeState('membest', LID, L.content_version, MEM_BEST); }
 /* opts.split(2026-09-15,一级 v5 翻卡站):拼音挪到译文那张牌,中文牌只剩中文,
    配对时得真的认字。默认不传,二级第一课的牌面不变。 */
 function memBuild(id, words, opts){
@@ -144,8 +148,8 @@ function memWin(id, st){
   st.phase = 'done'; clearInterval(st.tid);
   const t = Math.floor((Date.now() - st.t0)/1000);
   const key = id + '_r' + st.round;
-  if(MEM_BEST[key] === undefined || t < MEM_BEST[key]) MEM_BEST[key] = t;
-  EV('memory_done', LID + '.memory', {round:st.round, seconds:t, pairs:st.cards.length/2});
+  if(MEM_BEST[key] === undefined || t < MEM_BEST[key]){ MEM_BEST[key] = t; memBestSave(); }
+  EV('memory_done', LID + '.memory', {round:st.round, seconds:t, ms:Date.now() - st.t0, pairs:st.cards.length/2, best:MEM_BEST[key]});
   const bar = document.getElementById(id + '_t'); if(bar) bar.textContent = '';
   const box = document.getElementById(id);
   const d = document.createElement('div'); d.className = 'mdone';

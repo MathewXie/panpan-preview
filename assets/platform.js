@@ -12,14 +12,20 @@ const PP = (() => {
     session: "pp.session",
   };
 
+  /* 设置默认值(2026-10-17 决议 ENG07):以 engine/core.js 的 SET 为正本,这里逐键对齐——
+     中文界面、拼音开、译文关、常速、单站、白天;字号普通。课内页读写的就是这一份(localStorage pp.settings),
+     刷新、换课、装到桌面后都保留。theme 在用户没点过之前跟随系统深浅色(core.js 判),这里不写默认。 */
   const DEFAULTS = {
-    lang: "en",           // 界面语言：en / zh / id
-    pinyin: false,        // 课本默认是否显示拼音
-    translation: false,   // 课本默认是否显示译文
-    speed: "normal",      // 课文朗读速度：normal / slow
-    rate: 0.8,            // 语音合成语速
-    voice: "",            // 语音合成音色名，空为自动
-    motion: true,         // 翻页动画
+    lang: "zh",           // 界面语言:zh / en / id / km
+    fs: 0,                // 正文字号:0 小 · 1 普通 · 2 大(core.js FS_OPT 的下标,SET 现值 0)
+    py: 1,                // 拼音:1 开 · 0 关(2026-09-23 用户:一级初学者进来就该看到拼音)
+    tr: 0,                // 译文:0 关 · 1 开
+    sp: 0,                // 朗读速度:0 常速 · 1 慢速
+    read: 0,              // 阅读方式:0 单站 · 1 全课
+    theme: 0,             // 主题:0 白天 · 1 夜间(首次无设置时 core.js 按系统偏好覆盖)
+    rate: 0.8,            // 旧书架的语音合成语速(课内页不用)
+    voice: "",            // 旧书架的语音合成音色名,空为自动(课内页另存 pp.voice)
+    motion: true,         // 旧书架的翻页动画开关
   };
 
   const read = (k, d) => {
@@ -111,6 +117,23 @@ const PP = (() => {
   }
 
   const getProgress = (version = contentVersion) => read(progressKey(getLearner().id, version, accountId()), {});
+  /* 旧内容版本的进度保留可读(2026-10-17 用户拍板:改课文后旧进度不清除、不隐藏)。
+     返回 {内容版本: 该版本的进度表};阶段一不做跨版本合并,细则见 docs/15 末段。 */
+  function getAllProgress() {
+    const prefix = progressPrefix(getLearner().id, accountId());
+    const out = {};
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith(prefix)) out[decodeURIComponent(key.slice(prefix.length))] = read(key, {});
+    }
+    return out;
+  }
+  /* 课内页的本机状态键(当前站、走过的站、翻牌最快成绩、作答次数),体例同 blocks/workbook/workbook.js:
+     panpan.<名>.<账号>.<学习者>.<课号>.<内容版本>。改课文(内容版本变)就是一把新钥匙,旧钥匙的记录留着。 */
+  const stateKey = (name, lessonId, version) => 'panpan.' + name + '.'
+    + [accountId() || 'local', getLearner().id, lessonId, version || contentVersion].map(encodeURIComponent).join('.');
+  const readState = (name, lessonId, version, fallback) => read(stateKey(name, lessonId, version), fallback);
+  const writeState = (name, lessonId, version, value) => { try { write(stateKey(name, lessonId, version), value); } catch (_) { /* 存不下就只留内存 */ } };
 
   /* ── 后端（可选）───────────────────────────────────── */
   let cfg = null, token = null;
@@ -194,20 +217,12 @@ const PP = (() => {
         || vs.find((v) => /zh[-_]CN/i.test(v.lang))
         || vs[0];
   }
-  function speak(text, opts = {}) {
-    if (!window.speechSynthesis || !text) return false;
-    const v = pickVoice();
-    if (!v) return false;
-    speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(text);
-    u.voice = v; u.lang = v.lang;
-    u.rate = opts.rate || settings.rate || 0.8;
-    speechSynthesis.speak(u);
-    return true;
-  }
+  /* 2026-10-17 决议 ENG07:原先这里还有一套 speak(),与 engine/core.js 的 speak 并存;课内页实际只走 core.js
+     那套(带坏声音黑名单与看门狗),这里的已删除。旧书架的试听按钮改为就地起一句,见 platform/shelf.html。 */
 
   return { LS, DEFAULTS, getSettings, setSettings, getLearner, setLearner, setContentVersion, clearLocalProgress,
-           logEvent, getProgress, configure, online, signIn, signOut, flush,
-           listVoices, pickVoice, speak };
+           logEvent, getProgress, getAllProgress, stateKey, readState, writeState,
+           configure, online, signIn, signOut, flush,
+           listVoices, pickVoice };
 })();
 if (typeof window !== "undefined") window.PP = PP;
